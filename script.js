@@ -83,7 +83,7 @@ const progressFill = document.getElementById('progress-fill');
 const questionsContainer = document.getElementById('questions-container');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
-const backToScoringBtn = document.getElementById('back-to-scoring');
+const backToLastPillarBtn = document.getElementById('back-to-last-pillar');
 const downloadCsvBtn = document.getElementById('download-csv');
 const newAssessmentBtn = document.getElementById('new-assessment');
 const pillarScoresContainer = document.getElementById('pillar-scores-container');
@@ -326,8 +326,20 @@ function calculateAllPillarScores() {
 function showResults() {
     calculateAllPillarScores();
     renderResults();
-    pillarForm.classList.add('hidden');
+    pillarForm.classList.remove('active');
     resultsSection.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Get score pill properties based on score value
+function getScorePill(score) {
+    if (score < 2) {
+        return { label: 'Poor', bg: '#FFF1F0', border: '#D7100A', color: '#D7100A' };
+    } else if (score < 2.7) {
+        return { label: 'Insufficient', bg: '#FFF9EB', border: '#B18100', color: '#B18100' };
+    } else {
+        return { label: 'Excellent', bg: '#E7F9E9', border: '#032D08', color: '#032D08' };
+    }
 }
 
 // Render results
@@ -338,9 +350,13 @@ function renderResults() {
         // Create pillar header
         const pillarHeader = document.createElement('div');
         pillarHeader.className = 'pillar-score-header';
+        const pill = getScorePill(pillar.score);
         pillarHeader.innerHTML = `
             <div class="pillar-name">${pillar.name}</div>
-            <div class="pillar-score">${pillar.score.toFixed(2)}</div>
+            <div class="pillar-score-right">
+                <div class="pillar-score">${pillar.score.toFixed(2)}</div>
+                <span class="score-pill" style="background:${pill.bg};border:1px solid ${pill.border};color:${pill.color}">${pill.label}</span>
+            </div>
         `;
         pillarScoresContainer.appendChild(pillarHeader);
         
@@ -416,8 +432,9 @@ function newAssessment() {
         pillarScores = [];
         
         renderCurrentPillar();
-        pillarForm.classList.remove('hidden');
+        pillarForm.classList.add('active');
         resultsSection.classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
@@ -426,6 +443,7 @@ function goToNext() {
     if (currentPillarIndex < pillars.length - 1) {
         currentPillarIndex++;
         renderCurrentPillar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
         showResults();
     }
@@ -443,13 +461,15 @@ function attachEventListeners() {
     // Navigation buttons
     nextBtn.addEventListener('click', goToNext);
     prevBtn.addEventListener('click', goToPrev);
-    
+
     // Results section buttons
-    backToScoringBtn.addEventListener('click', () => {
-        pillarForm.classList.remove('hidden');
+    backToLastPillarBtn.addEventListener('click', () => {
+        currentPillarIndex = pillars.length - 1;
+        pillarForm.classList.add('active');
         resultsSection.classList.add('hidden');
+        renderCurrentPillar();
     });
-    
+
     downloadCsvBtn.addEventListener('click', downloadCSV);
     newAssessmentBtn.addEventListener('click', newAssessment);
 }
