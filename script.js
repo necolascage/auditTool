@@ -141,8 +141,15 @@ function renderQuestion(question, questionIndex) {
             <div class="screens-header">
                 <div class="screens-title">Audited screens or steps:</div>
                 <div class="screens-count">
-                    <input type="number" class="screens-input" 
-                           min="1" max="10" value="${question.screens}">
+                    <div class="screen-stepper">
+                        <button type="button" class="stepper-btn stepper-minus" aria-label="Remove screen">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="text" class="stepper-value" inputmode="numeric" value="${question.screens}">
+                        <button type="button" class="stepper-btn stepper-plus" aria-label="Add screen">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                     <span>screens</span>
                 </div>
             </div>
@@ -209,27 +216,53 @@ function attachQuestionEventListeners(questionElement, questionIndex) {
         questionElement.querySelector('.question-score').classList.toggle('hidden', this.checked);
     });
     
-    // Screens input
-    const screensInput = questionElement.querySelector('.screens-input');
-    screensInput.addEventListener('change', function() {
-        const newScreenCount = parseInt(this.value);
-        
-        // Update screens count
-        question.screens = newScreenCount;
-        
-        // Adjust screen scores array
-        if (newScreenCount > question.screenScores.length) {
-            // Add new screens with default score of 1
-            while (question.screenScores.length < newScreenCount) {
+    // Screen stepper buttons
+    const minusBtn = questionElement.querySelector('.stepper-minus');
+    const plusBtn = questionElement.querySelector('.stepper-plus');
+
+    function updateScreenCount(newCount) {
+        question.screens = newCount;
+        if (newCount > question.screenScores.length) {
+            while (question.screenScores.length < newCount) {
                 question.screenScores.push(1);
             }
-        } else if (newScreenCount < question.screenScores.length) {
-            // Remove excess screens
-            question.screenScores = question.screenScores.slice(0, newScreenCount);
+        } else if (newCount < question.screenScores.length) {
+            question.screenScores = question.screenScores.slice(0, newCount);
         }
-        
-        // Re-render this question
         renderCurrentPillar();
+    }
+
+    minusBtn.addEventListener('click', function() {
+        if (question.screens <= 1) {
+            // Toggle "does not apply"
+            question.notApplicable = true;
+            const naToggle = questionElement.querySelector('.not-applicable-toggle');
+            naToggle.checked = true;
+            questionElement.querySelector('.screens-section').classList.add('hidden');
+            questionElement.querySelector('.question-score').classList.add('hidden');
+        } else {
+            updateScreenCount(question.screens - 1);
+        }
+    });
+
+    plusBtn.addEventListener('click', function() {
+        if (question.screens >= 10) {
+            alert("The UX scoring tool only lets you score 10 screens per step, if you are assessing more, divide it into multiple scorings.");
+        } else {
+            updateScreenCount(question.screens + 1);
+        }
+    });
+
+    // Stepper text input
+    const stepperInput = questionElement.querySelector('.stepper-value');
+    stepperInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    stepperInput.addEventListener('change', function() {
+        let val = parseInt(this.value);
+        if (isNaN(val) || val < 1) val = 1;
+        if (val > 10) val = 10;
+        updateScreenCount(val);
     });
     
     // Score radio changes
