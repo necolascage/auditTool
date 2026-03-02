@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Scoring Tool - Simplified POC</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> UX Scoring Tool</h1>
+            <p class="subtitle">UX based scoring system</p>
+        </header>
+
+        <div class="app-container">
+            <!-- Pillar Form Section -->
+            <section id="pillar-form" class="pillar-section active">
+                <div class="pillar-header">
+                    <div class="progress">
+                        <span id="pillar-counter">Step 1 of 2</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+                    <h2 id="pillar-title">Cognitive Load</h2>
+                </div>
+
+                <div id="questions-container">
+                    <!-- Questions will be inserted here by JavaScript -->
+                </div>
+
+                <div class="navigation">
+                    <button id="prev-btn" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button id="next-btn" class="btn btn-primary">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-section hidden">
+                <h2><i class="fas fa-chart-bar"></i> Scorecard Results</h2>
+                
+                <div class="score-summary">
+                    <h3>Pillar Scores</h3>
+                    <div id="pillar-scores-container">
+                        <!-- Pillar scores will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="back-to-scoring" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Back to Scoring
+                    </button>
+                    <button id="download-csv" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download CSV
+                    </button>
+                    <button id="new-assessment" class="btn btn-secondary">
+                        <i class="fas fa-plus"></i> New Assessment
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
